@@ -32,9 +32,9 @@
             <span class="tag-name">&lt;/surname&gt;</span>
         </div>
         <div class="field">
-            <span class="tag-name">&lt;givenname&gt;</span>
+            <span class="tag-name">&lt;given-names&gt;</span>
             <input type="text" id="val2" oninput="updateXMLFromUI()">
-            <span class="tag-name">&lt;/givenname&gt;</span>
+            <span class="tag-name">&lt;/given-names&gt;</span>
         </div>
         <div class="field">
             <span class="tag-name">&lt;surname2&gt;</span>
@@ -42,9 +42,9 @@
             <span class="tag-name">&lt;/surname2&gt;</span>
         </div>
         <div class="field">
-            <span class="tag-name">&lt;givenname2&gt;</span>
+            <span class="tag-name">&lt;given-names2&gt;</span>
             <input type="text" id="val4" oninput="updateXMLFromUI()">
-            <span class="tag-name">&lt;/givenname2&gt;</span>
+            <span class="tag-name">&lt;/given-names2&gt;</span>
         </div>
     </div>
 
@@ -70,8 +70,8 @@
     function updateXMLFromUI() {
         const xmlString = 
           `<author>
-    <surname>${el1.value}</surname><givenname>${el2.value}</givenname>
-    <surname2>${el3.value}</surname2><givenname2>${el4.value}</givenname2>
+    <string-name><surname>${el1.value}</surname><given-names>${el2.value}</given-names></string-name>
+    <string-name><surname2>${el3.value}</surname2><given-names2>${el4.value}</given-names2></string-name>
 </author>`;
         xmlArea.value = xmlString;
     }
@@ -88,9 +88,9 @@
 
         // 各タグのテキスト内容を取得してUIに反映
         updateField(xmlDoc, "surname", el1);
-        updateField(xmlDoc, "givenname", el2);
+        updateField(xmlDoc, "given-names", el2);
         updateField(xmlDoc, "surname2", el3);
-        updateField(xmlDoc, "givenname2", el4);
+        updateField(xmlDoc, "given-names2", el4);
     }
 
     // 特定のタグの中身をInputにセットする補助関数
