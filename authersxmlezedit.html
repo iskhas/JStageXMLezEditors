@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>双方向連動型 XMLエディタ</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #f4f7f6; }
+        .container { max-width: 700px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        
+        .input-sections { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .field { display: flex; align-items: center; background: #eee; padding: 10px; border-radius: 5px; }
+        .tag-name { font-family: monospace; color: #d63384; font-weight: bold; margin: 0 5px; }
+        input { flex-grow: 1; border: 1px solid #ccc; padding: 5px; border-radius: 3px; }
+
+        .xml-area { margin-top: 20px; }
+        textarea { width: 100%; height: 180px; font-family: 'Courier New', Courier, monospace; font-size: 14px; padding: 10px; border: 2px solid #333; border-radius: 5px; box-sizing: border-box; }
+        
+        .controls { text-align: center; margin: 15px 0; }
+        button { padding: 10px 25px; cursor: pointer; background-color: #28a745; color: white; border: none; border-radius: 5px; font-weight: bold; }
+        button:hover { background-color: #218838; }
+        .hint { font-size: 0.85em; color: #666; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h3>項目入力（UI）</h3>
+    <div class="input-sections">
+        <div class="field">
+            <span class="tag-name">&lt;surname&gt;</span>
+            <input type="text" id="val1" oninput="updateXMLFromUI()">
+            <span class="tag-name">&lt;/surname&gt;</span>
+        </div>
+        <div class="field">
+            <span class="tag-name">&lt;givenname&gt;</span>
+            <input type="text" id="val2" oninput="updateXMLFromUI()">
+            <span class="tag-name">&lt;/givenname&gt;</span>
+        </div>
+        <div class="field">
+            <span class="tag-name">&lt;surname2&gt;</span>
+            <input type="text" id="val3" oninput="updateXMLFromUI()">
+            <span class="tag-name">&lt;/surname2&gt;</span>
+        </div>
+        <div class="field">
+            <span class="tag-name">&lt;givenname2&gt;</span>
+            <input type="text" id="val4" oninput="updateXMLFromUI()">
+            <span class="tag-name">&lt;/givenname2&gt;</span>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="updateXMLFromUI()">ボタンa: XMLを生成</button>
+        <div class="hint">※XML枠を直接書き換えても上に反映されます</div>
+    </div>
+
+    <div class="xml-area">
+        <label><strong>XMLテキスト</strong></label>
+        <textarea id="xmlOutput" oninput="updateUIFromXML()"></textarea>
+    </div>
+</div>
+
+<script>
+    const el1 = document.getElementById('val1');
+    const el2 = document.getElementById('val2');
+    const el3 = document.getElementById('val3');
+    const el4 = document.getElementById('val4');
+    const xmlArea = document.getElementById('xmlOutput');
+
+    // 1. 入力枠からXMLを生成する関数
+    function updateXMLFromUI() {
+        const xmlString = 
+          `<author>
+    <surname>${el1.value}</surname><givenname>${el2.value}</givenname>
+    <surname2>${el3.value}</surname2><givenname2>${el4.value}</givenname2>
+</author>`;
+        xmlArea.value = xmlString;
+    }
+
+    // 2. XML枠から入力枠を更新する関数
+    function updateUIFromXML() {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlArea.value, "text/xml");
+
+        // パースエラーがないかチェック
+        if (xmlDoc.getElementsByTagName("parsererror").length > 0) {
+            return; // 不完全な入力中は処理しない
+        }
+
+        // 各タグのテキスト内容を取得してUIに反映
+        updateField(xmlDoc, "surname", el1);
+        updateField(xmlDoc, "givenname", el2);
+        updateField(xmlDoc, "surname2", el3);
+        updateField(xmlDoc, "givenname2", el4);
+    }
+
+    // 特定のタグの中身をInputにセットする補助関数
+    function updateField(doc, tagName, inputEl) {
+        const tags = doc.getElementsByTagName(tagName);
+        if (tags.length > 0) {
+            inputEl.value = tags[0].textContent;
+        }
+    }
+
+    // 初回実行
+    updateXMLFromUI();
+</script>
+
+</body>
+</html>
